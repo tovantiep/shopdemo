@@ -2,13 +2,12 @@
 
 namespace App\Transformers;
 
-use App\Models\Product;
-use App\Models\User;
+use App\Models\Feedback;
 use JetBrains\PhpStorm\ArrayShape;
 use League\Fractal\Resource\Item;
 use League\Fractal\TransformerAbstract;
 
-class UserTransformer extends TransformerAbstract
+class FeedBackTransformer extends TransformerAbstract
 {
     /**
      * List of resources to automatically include
@@ -16,7 +15,7 @@ class UserTransformer extends TransformerAbstract
      * @var array
      */
     protected array $defaultIncludes = [
-       'role'
+       'user'
     ];
 
     /**
@@ -31,28 +30,26 @@ class UserTransformer extends TransformerAbstract
     /**
      * A Fractal transformer.
      *
-     * @param User $model
+     * @param Feedback $model
      * @return array
      */
-    #[ArrayShape([])] public function transform(User $model): array
+    #[ArrayShape([])] public function transform(Feedback $model): array
     {
         return [
-            'id' => $model->id,
-            'name' => $model->name,
-            'email' => $model->email,
-            'gender' => $model->gender,
-            'address' => $model->address
+            'id' =>$model->id,
+            'rating' => $model->rating,
+            'comment' => $model->comment,
         ];
     }
 
     /**
-     * @param User $model
+     * @param Feedback $model
      * @return Item
      */
-    public function includeRole(User $model): Item
+    public function includeUser(Feedback $model): Item
     {
-        $category = $model->role;
+        $user = $model->user;
 
-        return $this->item($category, new RoleTransformer());
+        return $this->item($user, new UserTransformer());
     }
 }

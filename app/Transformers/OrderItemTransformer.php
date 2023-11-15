@@ -2,13 +2,16 @@
 
 namespace App\Transformers;
 
+use App\Models\Category;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use JetBrains\PhpStorm\ArrayShape;
+use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use League\Fractal\TransformerAbstract;
 
-class UserTransformer extends TransformerAbstract
+class OrderItemTransformer extends TransformerAbstract
 {
     /**
      * List of resources to automatically include
@@ -16,7 +19,6 @@ class UserTransformer extends TransformerAbstract
      * @var array
      */
     protected array $defaultIncludes = [
-       'role'
     ];
 
     /**
@@ -31,28 +33,19 @@ class UserTransformer extends TransformerAbstract
     /**
      * A Fractal transformer.
      *
-     * @param User $model
+     * @param OrderItem $model
      * @return array
      */
-    #[ArrayShape([])] public function transform(User $model): array
+    #[ArrayShape([])] public function transform(OrderItem $model): array
     {
         return [
-            'id' => $model->id,
-            'name' => $model->name,
-            'email' => $model->email,
-            'gender' => $model->gender,
-            'address' => $model->address
+            'id' =>$model->id,
+            'product' => fractal()
+                ->item($model->product)
+                ->transformWith(new ProductTransformer()) // Tạo một Transformer mới cho Product nếu cần
+                ->toArray(),
+
         ];
     }
 
-    /**
-     * @param User $model
-     * @return Item
-     */
-    public function includeRole(User $model): Item
-    {
-        $category = $model->role;
-
-        return $this->item($category, new RoleTransformer());
-    }
 }

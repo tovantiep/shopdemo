@@ -2,13 +2,15 @@
 
 namespace App\Transformers;
 
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use JetBrains\PhpStorm\ArrayShape;
+use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use League\Fractal\TransformerAbstract;
 
-class UserTransformer extends TransformerAbstract
+class ProductTransformer extends TransformerAbstract
 {
     /**
      * List of resources to automatically include
@@ -16,7 +18,7 @@ class UserTransformer extends TransformerAbstract
      * @var array
      */
     protected array $defaultIncludes = [
-       'role'
+        'category'
     ];
 
     /**
@@ -31,28 +33,31 @@ class UserTransformer extends TransformerAbstract
     /**
      * A Fractal transformer.
      *
-     * @param User $model
+     * @param Product $model
      * @return array
      */
-    #[ArrayShape([])] public function transform(User $model): array
+    #[ArrayShape([])] public function transform(Product $model): array
     {
         return [
-            'id' => $model->id,
+            'id' =>$model->id,
             'name' => $model->name,
-            'email' => $model->email,
-            'gender' => $model->gender,
-            'address' => $model->address
+            'image' => $model->image,
+            'color' => $model->color,
+            'price' => $model->price,
+            'quantity' => $model->quantity,
+            'description' => $model->description,
+
         ];
     }
 
     /**
-     * @param User $model
+     * @param Product $model
      * @return Item
      */
-    public function includeRole(User $model): Item
-    {
-        $category = $model->role;
+     public function includeCategory(Product $model): Item
+     {
+        $category = $model->category;
 
-        return $this->item($category, new RoleTransformer());
+        return $this->item($category, new CategoryTransformer());
     }
 }

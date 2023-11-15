@@ -22,7 +22,10 @@ class Creator extends Component
      */
     public function index(): LengthAwarePaginator
     {
-        $users = User::with([])
+        $users = User::with(['role'])
+            ->when($this->request->filled("role_id"), function ($query) {
+                $query->where('role_id', $this->request->input('role_id'));
+            })
             ->when($this->request->filled("name"), function ($query) {
                 $query->where('name', 'LIKE', '%' . $this->escapeLike($this->request->input('name')) . '%');
             })
@@ -34,8 +37,6 @@ class Creator extends Component
     }
 
     /**
-     * Store a new User
-     *
      * @return User
      */
     public function store(): User
@@ -43,7 +44,9 @@ class Creator extends Component
         $user = new User([
             'name' => $this->request->input('name'),
             'email' => $this->request->input('email'),
-            'password' => bcrypt($this->request->input('password'))
+            'password' => bcrypt($this->request->input('password')),
+            'gender' => $this->request->input('gender'),
+            'address' => $this->request->input('address'),
         ]);
 
         $user->save();
@@ -78,6 +81,14 @@ class Creator extends Component
             $model->setAttribute("email", $this->request->input('email'));
         }
 
+        if ($this->request->filled("gender")) {
+            $model->setAttribute("gender", $this->request->input('gender'));
+        }
+
+        if ($this->request->filled("address")) {
+            $model->setAttribute("address", $this->request->input('address'));
+        }
+
         $model->save();
 
         return $model;
@@ -100,14 +111,14 @@ class Creator extends Component
     }
 
     /**
-     * Remove a record by id
-     *
-     * @param Model $model
-     * @return bool|null
+     * @param $id
+     * @return mixed
      */
-    public function destroy(Model $model): ?bool
+    public function destroy($id): mixed
     {
-        return $model->delete();
+        $user = User::findOrFail($id);
+        $user->delete();
+        return $user;
     }
 
     /**
@@ -118,46 +129,27 @@ class Creator extends Component
     #[ArrayShape([])] public function login(): array
     {
         $credentials = request(['email', 'password']);
-
         if (!Auth::attempt($credentials)) {
             $jsonData = [
                 'status' => 'fails',
                 'message' => 'Unauthorized'
             ];
         } else {
-
-            $user = $this->request->user();
-            $tokenResult = $user->createToken('Personal Access Token');
-            $token = $tokenResult->token;
-
-            if ($this->request->input('remember_me')) {
-                $token->expires_at = Carbon::now()->addWeeks();
-            }
-
-            $token->save();
-
             $jsonData = [
-                'status' => 'success',
-                'access_token' => $tokenResult->accessToken,
-                'token_type' => 'Bearer',
-                'expires_at' => Carbon::parse(
-                    $tokenResult->token->expires_at
-                )->toDateTimeString()
+                'status' => 'login success'
             ];
         }
-
         return $jsonData;
     }
 
     /**
      * Logout
      *
-     * @param $request
      * @return JsonResponse
      */
-    public function logout($request): JsonResponse
+    public function logout(): JsonResponse
     {
-        $request->user()->token()->revoke();
+        Auth::logout();
         return response()->json([
             'status' => 'success',
         ]);
