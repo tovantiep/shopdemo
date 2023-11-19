@@ -2,13 +2,13 @@
 
 namespace App\Transformers;
 
-use App\Models\Category;
-use App\Models\Role;
-use App\Models\User;
+use App\Models\Faq;
+use App\Models\Feedback;
 use JetBrains\PhpStorm\ArrayShape;
+use League\Fractal\Resource\Item;
 use League\Fractal\TransformerAbstract;
 
-class RoleTransformer extends TransformerAbstract
+class FaqTransformer extends TransformerAbstract
 {
     /**
      * List of resources to automatically include
@@ -16,7 +16,6 @@ class RoleTransformer extends TransformerAbstract
      * @var array
      */
     protected array $defaultIncludes = [
-        //
     ];
 
     /**
@@ -31,14 +30,16 @@ class RoleTransformer extends TransformerAbstract
     /**
      * A Fractal transformer.
      *
-     * @param Role $model
+     * @param Faq $model
      * @return array
      */
-    public function transform(Role $model): array
+    #[ArrayShape([])] public function transform(Faq $model): array
     {
         return [
-            'id' => $model->id,
-            'name' => $model->name
+            'id' =>$model->id,
+            'question' => $model->question,
+            'answer' => $model->answer,
         ];
     }
+
 }

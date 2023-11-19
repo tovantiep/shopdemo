@@ -3,8 +3,12 @@
 namespace App\Components\Order;
 
 use App\Components\Component;
+use App\Mail\OrderApproved;
 use App\Models\Order;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 
 class Creator extends Component
@@ -25,6 +29,42 @@ class Creator extends Component
             });
         return $order->paginate($this->getPaginationLimit($this->request));
     }
+
+
+    public function approve($id)
+    {
+        dd(Auth::user());
+        $order = Order::findOrFail($id)->first();
+
+        if ($order && $order->status == 0) {
+            $order->update(['status' => 1]);
+            $user = $order->user;
+
+            $data = [
+                'mail' => $user->email,
+                'user_name' => $user->name,
+                'orderItems' => $order->orderItems,
+                'totalAmount' => $order->total_amount,
+            ];
+
+            $orderItems = $order->orderItems;
+
+            foreach ($orderItems as $orderItem) {
+                $product = $orderItem->product;
+
+                if ($product->quantity - $orderItem->quantity >= 0) {
+                    $product->update(['quantity' => $product->quantity - $orderItem->quantity]);
+                } else {
+                    $data['error'] = 'Không đủ hàng trong kho';
+                    return $data;
+                }
+            }
+            return $data;
+        } else {
+            return ['error' => 'Order không tồn tại hoặc đã được xử lý'];
+        }
+    }
+
 
     /**
      * @return Order

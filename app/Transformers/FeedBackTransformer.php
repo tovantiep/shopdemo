@@ -15,7 +15,7 @@ class FeedBackTransformer extends TransformerAbstract
      * @var array
      */
     protected array $defaultIncludes = [
-       'user'
+       'user', 'product'
     ];
 
     /**
@@ -51,5 +51,16 @@ class FeedBackTransformer extends TransformerAbstract
         $user = $model->user;
 
         return $this->item($user, new UserTransformer());
+    }
+
+    /**
+     * @param Feedback $model
+     * @return Item
+     */
+    public function includeProduct(Feedback $model): Item
+    {
+        $user = $model->product;
+
+        return $this->item($user, new ProductTransformer());
     }
 }

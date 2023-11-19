@@ -22,7 +22,7 @@ class FeedBackController extends Controller
             return fractal()
                 ->collection($category)
                 ->transformWith(new FeedBackTransformer())
-                ->parseIncludes('user')
+                ->parseIncludes(['user', 'product'])
                 ->paginateWith(new IlluminatePaginatorAdapter($category))
                 ->respond();
         });
@@ -43,7 +43,7 @@ class FeedBackController extends Controller
             return fractal()
                 ->item($data)
                 ->transformWith(new FeedBackTransformer())
-                ->parseIncludes('user')
+                ->parseIncludes(['user', 'product'])
                 ->respond();
         } catch (Exception $exception) {
             DB::rollBack();

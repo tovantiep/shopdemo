@@ -40,9 +40,11 @@ class OrderItemTransformer extends TransformerAbstract
     {
         return [
             'id' =>$model->id,
+            'quantity' =>$model->quantity,
+            'amount' =>$model->amount,
             'product' => fractal()
                 ->item($model->product)
-                ->transformWith(new ProductTransformer()) // Tạo một Transformer mới cho Product nếu cần
+                ->transformWith(new ProductTransformer())
                 ->toArray(),
 
         ];

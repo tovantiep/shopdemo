@@ -29,13 +29,11 @@ class UserTransformer extends TransformerAbstract
     ];
 
     /**
-     * A Fractal transformer.
-     *
      * @param User $model
      * @return array
      */
-    #[ArrayShape([])] public function transform(User $model): array
-    {
+   public function transform(User $model): array
+   {
         return [
             'id' => $model->id,
             'name' => $model->name,
@@ -51,8 +49,7 @@ class UserTransformer extends TransformerAbstract
      */
     public function includeRole(User $model): Item
     {
-        $category = $model->role;
-
-        return $this->item($category, new RoleTransformer());
+        $role = $model->role;
+        return $this->item($role, new RoleTransformer());
     }
 }

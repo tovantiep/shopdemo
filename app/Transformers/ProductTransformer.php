@@ -3,6 +3,7 @@
 namespace App\Transformers;
 
 use App\Models\Category;
+use App\Models\Feedback;
 use App\Models\Product;
 use App\Models\User;
 use JetBrains\PhpStorm\ArrayShape;
@@ -46,7 +47,7 @@ class ProductTransformer extends TransformerAbstract
             'price' => $model->price,
             'quantity' => $model->quantity,
             'description' => $model->description,
-
+            'total_rating' => $this->calculateAverageRating($model->id) ?? null,
         ];
     }
 
@@ -59,5 +60,18 @@ class ProductTransformer extends TransformerAbstract
         $category = $model->category;
 
         return $this->item($category, new CategoryTransformer());
+    }
+
+    private function calculateAverageRating(int $productId): float
+    {
+        $feedbacks = Feedback::where('product_id', $productId)->get();
+        $totalRating = $feedbacks->sum('rating');
+        $totalFeedbacks = $feedbacks->count();
+
+        if ($totalFeedbacks > 0) {
+            return $totalRating / $totalFeedbacks;
+        }
+
+        return 0;
     }
 }

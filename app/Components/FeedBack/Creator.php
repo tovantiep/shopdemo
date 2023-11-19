@@ -21,6 +21,9 @@ class Creator extends Component
             ->when($this->request->filled("user_id"), function ($query) {
                 $query->where('user_id', $this->request->input('user_id'));
             })
+            ->when($this->request->filled("product_id"), function ($query) {
+                $query->where('product_id', $this->request->input('product_id'));
+            })
             ->when($this->request->filled("rating"), function ($query) {
                 $query->where('rating', $this->request->input('rating'));
             })
@@ -37,6 +40,7 @@ class Creator extends Component
     {
         $feedBack = new Feedback([
             'user_id' => $this->request->input('user_id'),
+            'product_id' => $this->request->input('product_id'),
             'rating' => $this->request->input('rating'),
             'comment' => $this->request->input('comment'),
         ]);

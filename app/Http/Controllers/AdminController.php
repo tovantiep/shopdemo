@@ -25,7 +25,6 @@ class AdminController extends Controller
     {
         return $this->withErrorHandling(function () use ($request) {
             $users = (new Creator($request))->index();
-
             return fractal()
                 ->collection($users)
                 ->transformWith(new UserTransformer())
@@ -46,14 +45,13 @@ class AdminController extends Controller
         try {
             $data = (new Creator($request))->store();
             DB::commit();
-
             return fractal()
                 ->item($data)
                 ->transformWith(new UserTransformer())
+                ->parseIncludes('role')
                 ->respond();
         } catch (Exception $exception) {
             DB::rollBack();
-
             return $this->message($exception->getMessage())
                 ->respondBadRequest();
         }
@@ -74,6 +72,7 @@ class AdminController extends Controller
             return fractal()
                 ->item($user)
                 ->transformWith(new UserTransformer())
+                ->parseIncludes('role')
                 ->respond();
         });
     }
@@ -93,6 +92,7 @@ class AdminController extends Controller
             return fractal()
                 ->item($data)
                 ->transformWith(new UserTransformer())
+                ->parseIncludes('role')
                 ->respond();
         } catch (Exception $exception) {
             DB::rollBack();
@@ -114,18 +114,14 @@ class AdminController extends Controller
         });
     }
 
-
     /**
-     * User Login
-     *
-     * @param UserLoginRequest $request
-     * @return JsonResponse
+     * @param Request $request
+     * @return mixed
      */
-    public function login(Request $request): JsonResponse
+    public function login(Request $request): mixed
     {
         return $this->withErrorHandling(function () use ($request) {
-            $data = (new Creator($request))->login();
-            return $this->respondOk($data);
+            return (new Creator($request))->login($request);
         });
     }
 
@@ -138,7 +134,7 @@ class AdminController extends Controller
     public function logout(Request $request): JsonResponse
     {
         return $this->withErrorHandling(function () use ($request) {
-            return (new Creator($request))->logout($request);
+            return (new Creator($request))->logout();
         });
     }
 

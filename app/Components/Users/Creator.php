@@ -10,8 +10,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Validator;
 use JetBrains\PhpStorm\ArrayShape;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Creator extends Component
 {
@@ -43,14 +47,13 @@ class Creator extends Component
     {
         $user = new User([
             'name' => $this->request->input('name'),
+            'role_id' => $this->request->input('role_id'),
             'email' => $this->request->input('email'),
             'password' => bcrypt($this->request->input('password')),
             'gender' => $this->request->input('gender'),
             'address' => $this->request->input('address'),
         ]);
-
         $user->save();
-
         return $user;
     }
 
@@ -89,6 +92,10 @@ class Creator extends Component
             $model->setAttribute("address", $this->request->input('address'));
         }
 
+        if ($this->request->filled("role_id")) {
+            $model->setAttribute("role_id", $this->request->input('role_id'));
+        }
+
         $model->save();
 
         return $model;
@@ -122,36 +129,57 @@ class Creator extends Component
     }
 
     /**
-     * Admin Login
-     *
-     * @return array
+     * @param Request $request
+     * @return JsonResponse
      */
-    #[ArrayShape([])] public function login(): array
+    public function login(Request $request): JsonResponse
     {
-        $credentials = request(['email', 'password']);
-        if (!Auth::attempt($credentials)) {
-            $jsonData = [
-                'status' => 'fails',
-                'message' => 'Unauthorized'
-            ];
-        } else {
-            $jsonData = [
-                'status' => 'login success'
-            ];
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json(['error'=>$validator->errors()->all()],400);
         }
-        return $jsonData;
+
+        Config::set('jwt.user', 'App\User');
+        Config::set('auth.providers.users.model', User::class);
+        $token = null;
+
+        if ($token = JWTAuth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            return response()->json([
+                'response' => 'success',
+                'result' => [
+                    'token' => $token,
+                ],
+            ]);
+        }
+        return response()->json([
+            'response' => 'error',
+            'message' => 'invalid_email_or_password',
+        ],400);
     }
 
     /**
-     * Logout
-     *
      * @return JsonResponse
      */
     public function logout(): JsonResponse
     {
-        Auth::logout();
-        return response()->json([
-            'status' => 'success',
-        ]);
+        if (Auth::check()) {
+            Auth::logout();
+
+            JWTAuth::invalidate(JWTAuth::getToken());
+
+            return response()->json([
+                'message' => 'Đăng xuất thành công'
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không xác thực'
+            ], 401);
+        }
     }
 }

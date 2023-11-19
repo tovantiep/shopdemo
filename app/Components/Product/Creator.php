@@ -31,6 +31,15 @@ class Creator extends Component
     }
 
     /**
+     * @return LengthAwarePaginator
+     */
+    public function hot(): LengthAwarePaginator
+    {
+        $product = Product::with(['category'])->orderByDesc('created_at');
+        return $product->paginate($this->getPaginationLimit($this->request));
+    }
+
+    /**
      * @return Product
      */
     public function store(): Product

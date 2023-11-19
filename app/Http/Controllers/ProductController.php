@@ -33,6 +33,24 @@ class ProductController extends Controller
     }
 
     /**
+     * @param ProductIndexRequest $request
+     * @return mixed
+     */
+    public function hot(ProductIndexRequest $request): mixed
+    {
+        return $this->withErrorHandling(function () use ($request) {
+            $product = (new Creator($request))->hot();
+            return fractal()
+                ->collection($product)
+                ->transformWith(new ProductTransformer())
+                ->parseIncludes('category')
+                ->paginateWith(new IlluminatePaginatorAdapter($product))
+                ->respond();
+        });
+
+    }
+
+    /**
      * @param ProductStoreRequest $request
      * @return JsonResponse
      */
