@@ -121,7 +121,7 @@ class AdminController extends Controller
     public function login(Request $request): mixed
     {
         return $this->withErrorHandling(function () use ($request) {
-            return (new Creator($request))->login($request);
+            return (new Creator($request))->login();
         });
     }
 

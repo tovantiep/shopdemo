@@ -35,6 +35,9 @@ class Creator extends Component
             })
             ->when($this->request->filled("email"), function ($query) {
                 $query->where('email', 'LIKE', '%' . $this->escapeLike($this->request->input('email')) . '%');
+            })
+            ->when($this->request->filled("phone"), function ($query) {
+                $query->where('phone', 'LIKE', '%' . $this->escapeLike($this->request->input('phone')) . '%');
             });
 
         return $users->paginate($this->getPaginationLimit($this->request));
@@ -48,6 +51,7 @@ class Creator extends Component
         $user = new User([
             'name' => $this->request->input('name'),
             'role_id' => $this->request->input('role_id'),
+            'phone' => $this->request->input('phone'),
             'email' => $this->request->input('email'),
             'password' => bcrypt($this->request->input('password')),
             'gender' => $this->request->input('gender'),
@@ -96,6 +100,10 @@ class Creator extends Component
             $model->setAttribute("role_id", $this->request->input('role_id'));
         }
 
+        if ($this->request->filled("phone")) {
+            $model->setAttribute("phone", $this->request->input('phone'));
+        }
+
         $model->save();
 
         return $model;
@@ -128,58 +136,36 @@ class Creator extends Component
         return $user;
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function login(Request $request): JsonResponse
+
+    #[ArrayShape([])] public function login()
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string',
-            'password' => 'required|string',
-        ]);
-
-        if($validator->fails())
-        {
-            return response()->json(['error'=>$validator->errors()->all()],400);
+        $credentials = request(['email', 'password']);
+        if (!Auth::attempt($credentials)) {
+            $jsonData = [
+                'status' => 'fails',
+                'message' => 'Unauthorized'
+            ];
+        } else {
+            $user = User::whereEmail(request('email'))->first();
+            $jsonData = [
+                'result' => 'SUCCESS',
+                'data' => $user,
+                'message' => 'Đăng nhập thành công'
+            ];
         }
-
-        Config::set('jwt.user', 'App\User');
-        Config::set('auth.providers.users.model', User::class);
-        $token = null;
-
-        if ($token = JWTAuth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            return response()->json([
-                'response' => 'success',
-                'result' => [
-                    'token' => $token,
-                ],
-            ]);
-        }
-        return response()->json([
-            'response' => 'error',
-            'message' => 'invalid_email_or_password',
-        ],400);
+        return $jsonData;
     }
 
     /**
+     * Logout
+     *
      * @return JsonResponse
      */
     public function logout(): JsonResponse
     {
-        if (Auth::check()) {
-            Auth::logout();
-
-            JWTAuth::invalidate(JWTAuth::getToken());
-
-            return response()->json([
-                'message' => 'Đăng xuất thành công'
-            ], 200);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Không xác thực'
-            ], 401);
-        }
+        Auth::logout();
+        return response()->json([
+            'status' => 'success',
+        ]);
     }
 }

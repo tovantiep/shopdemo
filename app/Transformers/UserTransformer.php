@@ -37,6 +37,7 @@ class UserTransformer extends TransformerAbstract
         return [
             'id' => $model->id,
             'name' => $model->name,
+            'phone' => $model->phone,
             'email' => $model->email,
             'gender' => $model->gender,
             'address' => $model->address

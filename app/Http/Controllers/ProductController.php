@@ -6,7 +6,6 @@ use App\Components\Product\Creator;
 use App\Http\Requests\Product\ProductIndexRequest;
 use App\Http\Requests\Product\ProductStoreRequest;
 use App\Http\Requests\Product\ProductUpdateRequest;
-use App\Models\Category;
 use App\Models\Product;
 use App\Transformers\ProductTransformer;
 use Exception;
@@ -75,7 +74,6 @@ class ProductController extends Controller
     }
 
     /**
-
      *
      * @param Request $request
      * @param Product $product

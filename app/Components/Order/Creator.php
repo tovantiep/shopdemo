@@ -24,16 +24,24 @@ class Creator extends Component
             ->when($this->request->filled("status"), function ($query) {
                 $query->where('status', 'LIKE', '%' . $this->escapeLike($this->request->input('status')) . '%');
             })
+            ->when($this->request->filled("user_id"), function ($query) {
+                $query->where('user_id', $this->request->input('user_id'));
+            })
             ->when($this->request->filled("total_mount"), function ($query) {
                 $query->where('total_mount', 'LIKE', '%' . $this->escapeLike($this->request->input('total_mount')) . '%');
+            })
+            ->when($this->request->filled("total_quantity"), function ($query) {
+                $query->where('total_quantity', 'LIKE', '%' . $this->escapeLike($this->request->input('total_quantity')) . '%');
             });
         return $order->paginate($this->getPaginationLimit($this->request));
     }
 
-
-    public function approve($id)
+    /**
+     * @param $id
+     * @return array|string[]
+     */
+    public function approve($id): array
     {
-        dd(Auth::user());
         $order = Order::findOrFail($id)->first();
 
         if ($order && $order->status == 0) {

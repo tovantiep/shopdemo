@@ -19,6 +19,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 
+
 /**
  * App\Models\User
  *
@@ -29,6 +30,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $password
  * @property string|null $remember_token
  * @property int|null $role_id
+ * @property string|null $phone
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property string|null $gender
@@ -42,7 +44,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property-read Role|null $role
  * @property-read Collection<int, PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
- * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
+ * @method static UserFactory factory($count = null, $state = [])
  * @method static Builder|User newModelQuery()
  * @method static Builder|User newQuery()
  * @method static Builder|User query()
@@ -54,6 +56,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @method static Builder|User whereId($value)
  * @method static Builder|User whereName($value)
  * @method static Builder|User wherePassword($value)
+ * @method static Builder|User wherePhone($value)
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereRoleId($value)
  * @method static Builder|User whereUpdatedAt($value)
@@ -70,6 +73,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'role_id',
+        'phone',
         'name',
         'email',
         'password',
