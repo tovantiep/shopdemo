@@ -17,6 +17,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 
 
+
 /**
  * App\Models\Order
  *
@@ -24,7 +25,8 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property int $user_id
  * @property int $total_quantity
  * @property int $total_amount
- * @property int $status
+ * @property string $status
+ * @property string $code
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
@@ -37,6 +39,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @method static Builder|Order newModelQuery()
  * @method static Builder|Order newQuery()
  * @method static Builder|Order query()
+ * @method static Builder|Order whereCode($value)
  * @method static Builder|Order whereCreatedAt($value)
  * @method static Builder|Order whereId($value)
  * @method static Builder|Order whereStatus($value)
@@ -60,6 +63,7 @@ class Order extends Authenticatable
         'total_quantity',
         'total_amount',
         'status',
+        'code',
     ];
 
     /**

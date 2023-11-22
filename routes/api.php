@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post("user/login", [AdminController::class, 'login'])->name('user.login');
+Route::get("overview", [AdminController::class, 'overview'])->name('overview');
 
 Route::delete('user/logout', [AdminController::class, 'logout'])->name("user.logout");
 
@@ -46,6 +47,7 @@ Route::get("product/index", [ProductController::class, 'index'])->name('product.
 Route::get("product/hot", [ProductController::class, 'hot'])->name('product.hot');
 Route::post("product/update/{product}", [ProductController::class, 'update'])->name('product.update');
 Route::get("product/show/{product}", [ProductController::class, 'show'])->name('product.show');
+Route::get("product/related", [ProductController::class, 'related'])->name('product.related');
 Route::delete("product/delete/{id}", [ProductController::class, 'destroy'])->name('product.destroy');
 
 // Order Item
@@ -56,7 +58,11 @@ Route::delete("order_item/delete/{id}", [OrderItemController::class, 'destroy'])
 // Order Item
 Route::post("order/store", [OrderController::class, 'store'])->name('order.store');
 Route::get("order/index", [OrderController::class, 'index'])->name('order.index');
+Route::get("order/purchase", [OrderController::class, 'purchase'])->name('order.purchase');
+Route::get("order/ordered", [OrderController::class, 'ordered'])->name('order.ordered');
 Route::put("order/approve/{id}", [OrderController::class, 'approve'])->name('order.approve');
+Route::put("order/ship/{id}", [OrderController::class, 'ship'])->name('order.ship');
+Route::put("order/cancel/{id}", [OrderController::class, 'cancel'])->name('order.cancel');
 
 // Feedback
 Route::post("feedback/store", [FeedBackController::class, 'store'])->name('feedback.store');
@@ -67,3 +73,4 @@ Route::post("faq/store", [FaqController::class, 'store'])->name('faq.store');
 Route::put("faq/update/{faq}", [FaqController::class, 'update'])->name('faq.update');
 Route::get("faq/index", [FaqController::class, 'index'])->name('faq.index');
 Route::post("faq/get-answer", [FaqController::class, 'getAnswer'])->name('faq.get-answer');
+

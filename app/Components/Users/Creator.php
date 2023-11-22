@@ -3,6 +3,8 @@
 namespace App\Components\Users;
 
 use App\Components\Component;
+use App\Models\Order;
+use App\Models\Product;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -13,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use JetBrains\PhpStorm\ArrayShape;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -41,6 +44,29 @@ class Creator extends Component
             });
 
         return $users->paginate($this->getPaginationLimit($this->request));
+    }
+
+    /**
+     * @return array
+     */
+    public function overview(): array
+    {
+        $data = [];
+        $user = User::all();
+        $order = Order::all();
+        $totalUser = $user->where('role_id',0)->count();
+        $totalAdmin = $user->where('role_id',1)->count();
+        $revenue = $order->whereIn('status', [1, 2]);
+        $estimatedRevenue =  $order->where('status', '<>', 3);
+        $totalProduct = Product::all()->count();
+
+        $data['revenue'] = $revenue->sum('total_amount');
+        $data['estimated_revenue'] = $estimatedRevenue->sum('total_amount');
+        $data['total_user'] = $totalUser;
+        $data['total_admin'] = $totalAdmin;
+        $data['total_product'] = $totalProduct;
+
+        return $data;
     }
 
     /**

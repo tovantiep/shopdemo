@@ -18,7 +18,8 @@ class OrderStoreRequest extends FormRequest
             'user_id' => 'required|integer',
             'total_amount' => 'required|integer',
             'total_quantity' => 'required|integer',
-            'status' => 'boolean',
+            'status' => 'string|in:0,1,2',
+            'code' => 'string',
         ];
     }
 }

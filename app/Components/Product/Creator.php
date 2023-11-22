@@ -31,6 +31,19 @@ class Creator extends Component
     }
 
     /**
+     * Get all data of Admin
+     *
+     * @return LengthAwarePaginator
+     */
+    public function related(): LengthAwarePaginator
+    {
+        $category_id = $this->request->input('category_id');
+
+        $product = Product::whereCategoryId($category_id);
+        return $product->paginate($this->getPaginationLimit($this->request));
+    }
+
+    /**
      * @return LengthAwarePaginator
      */
     public function hot(): LengthAwarePaginator

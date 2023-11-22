@@ -6,6 +6,9 @@ use App\Components\Order\Creator;
 use App\Http\Requests\Order\OrderIndexRequest;
 use App\Http\Requests\Order\OrderStoreRequest;
 use App\Mail\OrderApproved;
+use App\Mail\OrderCancel;
+use App\Mail\OrderShip;
+use App\Models\Order;
 use App\Transformers\OrderItemTransformer;
 use App\Transformers\OrderTransformer;
 use Exception;
@@ -18,13 +21,49 @@ use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 class OrderController extends Controller
 {
     /**
-     * @param OrderIndexRequest $request
-     * @return mixed
-     */
+ * @param OrderIndexRequest $request
+ * @return mixed
+ */
     public function index(OrderIndexRequest $request): mixed
     {
         return $this->withErrorHandling(function () use ($request) {
             $product = (new Creator($request))->index();
+
+            return fractal()
+                ->collection($product)
+                ->transformWith(new OrderTransformer())
+                ->parseIncludes('order_items')
+                ->paginateWith(new IlluminatePaginatorAdapter($product))
+                ->respond();
+        });
+
+    }
+    /**
+     * @param OrderIndexRequest $request
+     * @return mixed
+     */
+    public function ordered(OrderIndexRequest $request): mixed
+    {
+        return $this->withErrorHandling(function () use ($request) {
+            $product = (new Creator($request))->ordered();
+
+            return fractal()
+                ->collection($product)
+                ->transformWith(new OrderTransformer())
+                ->parseIncludes('order_items')
+                ->paginateWith(new IlluminatePaginatorAdapter($product))
+                ->respond();
+        });
+
+    }
+    /**
+     * @param OrderIndexRequest $request
+     * @return mixed
+     */
+    public function purchase(OrderIndexRequest $request): mixed
+    {
+        return $this->withErrorHandling(function () use ($request) {
+            $product = (new Creator($request))->purchase();
 
             return fractal()
                 ->collection($product)
@@ -45,16 +84,19 @@ class OrderController extends Controller
         DB::beginTransaction();
         try {
             $data = (new Creator($request))->store();
-            DB::commit();
-
-            return fractal()
-                ->item($data)
-                ->transformWith(new OrderTransformer())
-                ->parseIncludes('order_items')
-                ->respond();
+            if ($data instanceof Order) {
+                DB::commit();
+                return fractal()
+                    ->item($data)
+                    ->transformWith(new OrderTransformer())
+                    ->parseIncludes('order_items')
+                    ->respond();
+            } else {
+                DB::rollBack();
+                return response()->json(['message' => $data], 400);
+            }
         } catch (Exception $exception) {
             DB::rollBack();
-
             return $this->message($exception->getMessage())
                 ->respondBadRequest();
         }
@@ -70,12 +112,54 @@ class OrderController extends Controller
         $data = (new Creator($request))->approve($id);
 
         if (isset($data['error'])) {
-            return response()->json(['message' => $data['error']]);
+            return response()->json(['message' => $data['error']], 400);
         }
 
         try {
             Mail::to('tovantiep2604@gmail.com')->send(new OrderApproved($data));
+            return response()->json(['message' => 'Đơn hàng đã được thanh toán']);
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse|array
+     */
+    public function ship(Request $request, $id): JsonResponse|array
+    {
+        $data = (new Creator($request))->ship($id);
+
+        if (isset($data['error'])) {
+            return response()->json(['message' => $data['error']], 400);
+        }
+
+        try {
+            Mail::to('tovantiep2604@gmail.com')->send(new OrderShip($data));
             return response()->json(['message' => 'Đơn hàng đã được xử lí']);
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse|array
+     */
+    public function cancel(Request $request, $id): JsonResponse|array
+    {
+        $data = (new Creator($request))->cancel($id);
+
+        if (isset($data['error'])) {
+            return response()->json(['message' => $data['error']], 400);
+        }
+
+        try {
+            Mail::to('tovantiep2604@gmail.com')->send(new OrderCancel($data));
+            return response()->json(['message' => 'Hủy đơn hàng thành công']);
         } catch (\Exception $e) {
             dd($e->getMessage());
         }

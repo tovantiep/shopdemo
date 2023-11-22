@@ -16,6 +16,10 @@ use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 
 class ProductController extends Controller
 {
+    /**
+     * @param ProductIndexRequest $request
+     * @return mixed
+     */
     public function index(ProductIndexRequest $request): mixed
     {
         return $this->withErrorHandling(function () use ($request) {
@@ -27,6 +31,26 @@ class ProductController extends Controller
                 ->parseIncludes('category')
                 ->paginateWith(new IlluminatePaginatorAdapter($product))
                 ->respond();
+        });
+
+    }
+
+    /**
+     * @param ProductIndexRequest $request
+     * @return mixed
+     */
+    public function related(ProductIndexRequest $request): mixed
+    {
+        return $this->withErrorHandling(function () use ($request) {
+            $product = (new Creator($request))->related();
+
+            return optional($product) ? fractal()
+                ->collection($product)
+                ->transformWith(new ProductTransformer())
+                ->parseIncludes('category')
+                ->paginateWith(new IlluminatePaginatorAdapter($product))
+                ->respond(): $this->respondBadRequest();
+
         });
 
     }

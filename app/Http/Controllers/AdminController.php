@@ -36,6 +36,18 @@ class AdminController extends Controller
     }
 
     /**
+     * @param UserIndexRequest $request
+     * @return mixed
+     */
+    public function overview(UserIndexRequest $request): mixed
+    {
+        return $this->withErrorHandling(function () use ($request) {
+            return (new Creator($request))->overview();
+        });
+
+    }
+
+    /**
      * @param UserStoreRequest $request
      * @return JsonResponse
      */

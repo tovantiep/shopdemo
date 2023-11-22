@@ -45,6 +45,8 @@ class OrderTransformer extends TransformerAbstract
             'user_id' => $model->user_id,
             'total_amount' => $model->total_amount,
             'total_quantity' => $model->total_quantity,
+            'code' => $model->code,
+            'status' => $model->status,
 
         ];
     }
