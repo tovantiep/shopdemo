@@ -116,7 +116,7 @@ class OrderController extends Controller
         }
 
         try {
-            Mail::to('tovantiep2604@gmail.com')->send(new OrderApproved($data));
+            Mail::to($data['mail'])->send(new OrderApproved($data));
             return response()->json(['message' => 'Đơn hàng đã được thanh toán']);
         } catch (\Exception $e) {
             dd($e->getMessage());
@@ -137,7 +137,7 @@ class OrderController extends Controller
         }
 
         try {
-            Mail::to('tovantiep2604@gmail.com')->send(new OrderShip($data));
+            Mail::to($data['mail'])->send(new OrderShip($data));
             return response()->json(['message' => 'Đơn hàng đã được xử lí']);
         } catch (\Exception $e) {
             dd($e->getMessage());
@@ -158,7 +158,7 @@ class OrderController extends Controller
         }
 
         try {
-            Mail::to('tovantiep2604@gmail.com')->send(new OrderCancel($data));
+            Mail::to($data['mail'])->send(new OrderCancel($data));
             return response()->json(['message' => 'Hủy đơn hàng thành công']);
         } catch (\Exception $e) {
             dd($e->getMessage());
