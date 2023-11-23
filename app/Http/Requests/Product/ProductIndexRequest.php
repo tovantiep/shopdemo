@@ -16,6 +16,8 @@ class ProductIndexRequest extends FormRequest
     {
         return [
             'name' => 'string|max:255',
+            'code' => 'string|max:20',
+            'size' => 'string|max:255',
             'image' => 'image|mimes:jpg,png,jpeg|max:2048',
             'color' => 'string|max:255',
             'price' => 'integer',

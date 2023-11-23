@@ -15,7 +15,7 @@ class CategoryUpdateRequest extends FormRequest
     #[ArrayShape([])] public function rules(): array
     {
         return [
-            'name' => 'string|max:255'
+            'name' => 'string|max:255|unique:categories,name'
         ];
     }
 

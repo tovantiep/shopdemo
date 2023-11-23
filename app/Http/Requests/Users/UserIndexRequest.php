@@ -19,29 +19,4 @@ class UserIndexRequest extends FormRequest
             'email' => 'email|max:255',
         ];
     }
-
-    /**
-     * Customize messages
-     *
-     * @return array
-     */
-    #[ArrayShape([])] public function messages(): array
-    {
-        return [
-            'email' => ':attributeはメールアドレスでなければなりません。',
-        ];
-    }
-
-    /**
-     * Customize Attributes
-     *
-     * @return string[]
-     */
-    #[ArrayShape([])] public function attributes(): array
-    {
-        return [
-            'name' => 'なまえ',
-            'email' => 'メールアドレス'
-        ];
-    }
 }

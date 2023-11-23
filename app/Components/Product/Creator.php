@@ -24,6 +24,21 @@ class Creator extends Component
             ->when($this->request->filled("name"), function ($query) {
                 $query->where('name', 'LIKE', '%' . $this->escapeLike($this->request->input('name')) . '%');
             })
+            ->when($this->request->filled("code"), function ($query) {
+                $query->where('code', 'LIKE', '%' . $this->escapeLike($this->request->input('code')) . '%');
+            })
+            ->when($this->request->filled("size"), function ($query) {
+                $query->where('size', 'LIKE', '%' . $this->escapeLike($this->request->input('size')) . '%');
+            })
+            ->when($this->request->filled("color"), function ($query) {
+                $query->where('color', 'LIKE', '%' . $this->escapeLike($this->request->input('color')) . '%');
+            })
+            ->when($this->request->filled("price"), function ($query) {
+                $query->where('price', $this->request->input('price'));
+            })
+            ->when($this->request->filled("quantity"), function ($query) {
+                $query->where('quantity', $this->request->input('quantity'));
+            })
             ->when($this->request->filled("category_id"), function ($query) {
                 $query->where('category_id', $this->escapeLike($this->request->input('category_id')));
             });
@@ -62,6 +77,8 @@ class Creator extends Component
         $product = new Product([
             'category_id' => $this->request->input('category_id'),
             'name' => $this->request->input('name'),
+            'code' => $this->request->input('code'),
+            'size' => $this->request->input('size'),
             'image' => $imagePath,
             'color' => $this->request->input('color'),
             'price' => $this->request->input('price'),

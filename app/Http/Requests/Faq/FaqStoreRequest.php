@@ -15,7 +15,7 @@ class FaqStoreRequest extends FormRequest
     #[ArrayShape([])] public function rules(): array
     {
         return [
-            'question' => 'string|max:255',
+            'question' => 'string|max:255|unique:faqs,question',
             'answer' => 'nullable|string|max:255',
         ];
     }

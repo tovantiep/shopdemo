@@ -118,14 +118,28 @@ class Creator extends Component
             $order->update(['status' => 3]);
             $user = $order->user;
 
-            return [
+            $data =  [
                 'mail' => $user->email,
                 'user_name' => $user->name,
                 'code' => $order->code
             ];
+
+            $orderItems = $order->orderItems;
+
+            foreach ($orderItems as $orderItem) {
+                $product = $orderItem->product;
+
+                if ($orderItem->quantity >= 0) {
+                    $product->update(['quantity' => $product->quantity + $orderItem->quantity]);
+                } else {
+                    throw new \Exception('Không đủ hàng trong kho');
+                }
+            }
         } else {
-            return ['error' => 'Order không tồn tại hoặc đã được xử lý'];
+            $data['error'] =  'Order không tồn tại hoặc đã được xử lý';
         }
+
+        return  $data;
     }
 
 

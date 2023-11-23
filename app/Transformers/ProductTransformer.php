@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Feedback;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use JetBrains\PhpStorm\ArrayShape;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
@@ -39,10 +40,13 @@ class ProductTransformer extends TransformerAbstract
      */
     #[ArrayShape([])] public function transform(Product $model): array
     {
+        $imagePath = $model->image ? url(Storage::url($model->image)) : null;
         return [
             'id' =>$model->id,
             'name' => $model->name,
-            'image' => $model->image,
+            'code' => $model->code,
+            'size' => $model->size,
+            'image' => $imagePath,
             'color' => $model->color,
             'price' => $model->price,
             'quantity' => $model->quantity,
@@ -62,6 +66,10 @@ class ProductTransformer extends TransformerAbstract
         return $this->item($category, new CategoryTransformer());
     }
 
+    /**
+     * @param int $productId
+     * @return float
+     */
     private function calculateAverageRating(int $productId): float
     {
         $feedbacks = Feedback::where('product_id', $productId)->get();

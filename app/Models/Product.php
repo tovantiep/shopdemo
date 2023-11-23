@@ -17,12 +17,15 @@ use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 
 
+
 /**
  * App\Models\Product
  *
  * @property int $id
  * @property int $category_id
  * @property string $name
+ * @property string $code
+ * @property string $size
  * @property string $image
  * @property string $color
  * @property int $price
@@ -43,6 +46,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @method static Builder|Product newQuery()
  * @method static Builder|Product query()
  * @method static Builder|Product whereCategoryId($value)
+ * @method static Builder|Product whereCode($value)
  * @method static Builder|Product whereColor($value)
  * @method static Builder|Product whereCreatedAt($value)
  * @method static Builder|Product whereDescription($value)
@@ -51,6 +55,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @method static Builder|Product whereName($value)
  * @method static Builder|Product wherePrice($value)
  * @method static Builder|Product whereQuantity($value)
+ * @method static Builder|Product whereSize($value)
  * @method static Builder|Product whereUpdatedAt($value)
  * @mixin Eloquent
  */
@@ -66,6 +71,8 @@ class Product extends Authenticatable
     protected $fillable = [
         'category_id',
         'name',
+        'code',
+        'size',
         'image',
         'color',
         'price',
