@@ -22,14 +22,19 @@ class Creator extends Component
      */
     public function index(): LengthAwarePaginator
     {
-        $feedBack = Faq::with([])
+        $faqs = Faq::with([])
             ->when($this->request->filled("question"), function ($query) {
                 $query->where('question', 'LIKE', '%' . $this->escapeLike($this->request->input('question')) . '%');
             })
             ->when($this->request->filled("answer"), function ($query) {
                 $query->where('answer', 'LIKE', '%' . $this->escapeLike($this->request->input('answer')) . '%');
             });
-        return $feedBack->paginate($this->getPaginationLimit($this->request));
+        $orderCheck = in_array($this->request->input("order"), self::ORDER);
+        if ($this->request->input("column") == 'created_at' && $orderCheck) {
+            $faqs->orderBy('created_at', $this->request->input("order"));
+        }
+        $faqs->orderByDesc('created_at');
+        return $faqs->paginate($this->getPaginationLimit($this->request));
     }
 
     /**
@@ -54,7 +59,7 @@ class Creator extends Component
                 ->groupBy('product_id')
                 ->orderByDesc('average_rating')
                 ->first();
-          $product =   Product::whereId($bestRatedProduct->product_id)->first();
+            $product = Product::whereId($bestRatedProduct->product_id)->first();
             return response()->json(['answer' => "Sản phẩm tốt nhất là: $product->name"]);
         }
         if (isset($feedBack)) {

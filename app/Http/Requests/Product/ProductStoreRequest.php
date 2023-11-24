@@ -22,6 +22,7 @@ class ProductStoreRequest extends FormRequest
             'image' => 'required|image|mimes:jpg,png,jpeg|max:2048',
             'color' => 'required|string|max:255',
             'price' => 'required|integer',
+            'price_discount' => 'required|integer',
             'quantity' => 'required|integer',
             'description' => 'string|max:255',
         ];

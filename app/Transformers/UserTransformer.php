@@ -4,6 +4,7 @@ namespace App\Transformers;
 
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use JetBrains\PhpStorm\ArrayShape;
 use League\Fractal\Resource\Item;
 use League\Fractal\TransformerAbstract;
@@ -34,13 +35,16 @@ class UserTransformer extends TransformerAbstract
      */
    public function transform(User $model): array
    {
+       $imagePath = $model->avatar ? url(Storage::url($model->avatar)) : null;
         return [
             'id' => $model->id,
             'name' => $model->name,
+            'avatar' => $imagePath,
             'phone' => $model->phone,
             'email' => $model->email,
             'gender' => $model->gender,
-            'address' => $model->address
+            'address' => $model->address,
+            'created_at' => $model->created_at,
         ];
     }
 

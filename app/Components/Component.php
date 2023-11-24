@@ -11,6 +11,7 @@ class Component
 {
     use WithPaginationLimit, WithFilterSupport;
 
+    const ORDER = ['asc', 'desc'];
     /**
      * The creating target request instance.
      */

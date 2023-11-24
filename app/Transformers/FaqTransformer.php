@@ -39,6 +39,7 @@ class FaqTransformer extends TransformerAbstract
             'id' =>$model->id,
             'question' => $model->question,
             'answer' => $model->answer,
+            'created_at' => $model->created_at,
         ];
     }
 

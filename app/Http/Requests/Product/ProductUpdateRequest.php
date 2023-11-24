@@ -21,6 +21,7 @@ class ProductUpdateRequest extends FormRequest
             'image' => 'image|mimes:jpg,png,jpeg|max:2048',
             'color' => 'string|max:255',
             'price' => 'integer',
+            'price_discount' => 'integer',
             'quantity' => 'integer',
             'description' => 'string|max:255',
         ];

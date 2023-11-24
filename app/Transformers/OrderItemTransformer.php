@@ -42,6 +42,7 @@ class OrderItemTransformer extends TransformerAbstract
             'id' =>$model->id,
             'quantity' =>$model->quantity,
             'amount' =>$model->amount,
+            'created_at' => $model->created_at,
             'product' => fractal()
                 ->item($model->product)
                 ->transformWith(new ProductTransformer())

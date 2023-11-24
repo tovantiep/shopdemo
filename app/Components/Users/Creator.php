@@ -5,6 +5,7 @@ namespace App\Components\Users;
 use App\Components\Component;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use JetBrains\PhpStorm\ArrayShape;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -43,6 +45,12 @@ class Creator extends Component
                 $query->where('phone', 'LIKE', '%' . $this->escapeLike($this->request->input('phone')) . '%');
             });
 
+        $orderCheck = in_array($this->request->input("order"), self::ORDER);
+        if ($this->request->input("column") == 'created_at' && $orderCheck) {
+            $users->orderBy('created_at', $this->request->input("order"));
+        }
+        $users->orderByDesc('created_at');
+
         return $users->paginate($this->getPaginationLimit($this->request));
     }
 
@@ -54,10 +62,10 @@ class Creator extends Component
         $data = [];
         $user = User::all();
         $order = Order::all();
-        $totalUser = $user->where('role_id',0)->count();
-        $totalAdmin = $user->where('role_id',1)->count();
+        $totalUser = $user->where('role_id', 0)->count();
+        $totalAdmin = $user->where('role_id', 1)->count();
         $revenue = $order->whereIn('status', [1, 2]);
-        $estimatedRevenue =  $order->where('status', '<>', 3);
+        $estimatedRevenue = $order->where('status', '<>', 3);
         $totalProduct = Product::all()->count();
 
         $data['revenue'] = $revenue->sum('total_amount');
@@ -74,9 +82,11 @@ class Creator extends Component
      */
     public function store(): User
     {
+        $imagePath = $this->request->file('avatar')->store('public/images');
         $user = new User([
             'name' => $this->request->input('name'),
             'role_id' => $this->request->input('role_id'),
+            'avatar' => $imagePath,
             'phone' => $this->request->input('phone'),
             'email' => $this->request->input('email'),
             'password' => bcrypt($this->request->input('password')),
@@ -130,6 +140,12 @@ class Creator extends Component
             $model->setAttribute("phone", $this->request->input('phone'));
         }
 
+        if ($this->request->hasFile("avatar")) {
+            $newImagePath = $this->request->file('avatar')->store('public/images');
+            Storage::delete($model->avatar);
+            $model->setAttribute("avatar", $newImagePath);
+        }
+
         $model->save();
 
         return $model;
@@ -162,8 +178,10 @@ class Creator extends Component
         return $user;
     }
 
-
-    #[ArrayShape([])] public function login()
+    /**
+     * @return array|string[]
+     */
+    #[ArrayShape([])] public function login(): array
     {
         $credentials = request(['email', 'password']);
         if (!Auth::attempt($credentials)) {
@@ -172,10 +190,26 @@ class Creator extends Component
                 'message' => 'Unauthorized'
             ];
         } else {
-            $user = User::whereEmail(request('email'))->first();
+            $user = User::with('role')
+            ->whereEmail(request('email'))
+                ->first();
+
             $jsonData = [
                 'result' => 'SUCCESS',
-                'data' => $user,
+                'data' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'email_verified_at' => $user->email_verified_at,
+                    'role_id' => $user->role_id,
+                    'role_name' => $user->role->name,
+                    'avatar' => $user->avatar,
+                    'phone' => $user->phone,
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
+                    'gender' => $user->gender,
+                    'address' => $user->address,
+                ],
                 'message' => 'Đăng nhập thành công'
             ];
         }

@@ -3,11 +3,13 @@
 namespace App\Components\Product;
 
 use App\Components\Component;
+use App\Models\Feedback;
 use App\Models\Product;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -36,12 +38,22 @@ class Creator extends Component
             ->when($this->request->filled("price"), function ($query) {
                 $query->where('price', $this->request->input('price'));
             })
+            ->when($this->request->filled("price_discount"), function ($query) {
+                $query->where('price_discount', $this->request->input('price_discount'));
+            })
             ->when($this->request->filled("quantity"), function ($query) {
                 $query->where('quantity', $this->request->input('quantity'));
             })
             ->when($this->request->filled("category_id"), function ($query) {
                 $query->where('category_id', $this->escapeLike($this->request->input('category_id')));
             });
+
+        $orderCheck = in_array($this->request->input("order"), self::ORDER);
+        if ($this->request->input("column") == 'created_at' && $orderCheck) {
+            $product->orderBy('created_at', $this->request->input("order"));
+        }
+
+        $product->orderByDesc('created_at');
         return $product->paginate($this->getPaginationLimit($this->request));
     }
 
@@ -59,12 +71,44 @@ class Creator extends Component
     }
 
     /**
-     * @return LengthAwarePaginator
+     * @return mixed
      */
-    public function hot(): LengthAwarePaginator
+    public function hot(): mixed
     {
-        $product = Product::with(['category'])->orderByDesc('created_at');
-        return $product->paginate($this->getPaginationLimit($this->request));
+        $hotProducts = Feedback::select('product_id', DB::raw('AVG(rating) as average_rating'))
+            ->groupBy('product_id')
+            ->orderByDesc('average_rating')
+            ->get();
+
+        $productIds = $hotProducts->pluck('product_id');
+
+        $productDetails = Product::whereIn('id', $productIds)->get();
+
+        return $hotProducts->map(function ($item) use ($productDetails) {
+            $product = $productDetails->where('id', $item->product_id)->first();
+            $categoryName = $product->category->name;
+            $imageUrl = url(Storage::url($product->image));
+
+            return [
+                'product_details' => [
+                    'id' => $product->id,
+                    'category_id' => $product->category_id,
+                    'category_name' => $categoryName,
+                    'name' => $product->name,
+                    'code' => $product->code,
+                    'size' => $product->size,
+                    'image' => $imageUrl,
+                    'color' => $product->color,
+                    'price' => $product->price,
+                    'price_discount' => $product->price_discount,
+                    'quantity' => $product->quantity,
+                    'description' => $product->description,
+                    'created_at' => $product->created_at,
+                    'updated_at' => $product->updated_at,
+                ],
+                'average_rating' => $item->average_rating,
+            ];
+        });
     }
 
     /**
@@ -82,6 +126,7 @@ class Creator extends Component
             'image' => $imagePath,
             'color' => $this->request->input('color'),
             'price' => $this->request->input('price'),
+            'price_discount' => $this->request->input('price_discount'),
             'quantity' => $this->request->input('quantity'),
             'description' => $this->request->input('description'),
         ]);
@@ -121,6 +166,9 @@ class Creator extends Component
         }
         if ($this->request->filled("price")) {
             $model->setAttribute("price", $this->request->input('price'));
+        }
+        if ($this->request->filled("price_discount")) {
+            $model->setAttribute("price_discount", $this->request->input('price_discount'));
         }
         if ($this->request->filled("quantity")) {
             $model->setAttribute("quantity", $this->request->input('quantity'));

@@ -20,7 +20,8 @@ class OrderTransformer extends TransformerAbstract
      * @var array
      */
     protected array $defaultIncludes = [
-        'order_items'
+        'order_items',
+        'user'
     ];
 
     /**
@@ -42,12 +43,11 @@ class OrderTransformer extends TransformerAbstract
     {
         return [
             'id' =>$model->id,
-            'user_id' => $model->user_id,
             'total_amount' => $model->total_amount,
             'total_quantity' => $model->total_quantity,
             'code' => $model->code,
             'status' => $model->status,
-
+            'created_at' => $model->created_at,
         ];
     }
 
@@ -59,6 +59,16 @@ class OrderTransformer extends TransformerAbstract
     {
         $order_items = $model->orderItems;
         return $this->collection($order_items, new OrderItemTransformer());
+    }
+
+    /**
+     * @param Order $model
+     * @return Item
+     */
+    public function includeUser(Order $model): Item
+    {
+        $user = $model->user;
+        return $this->item($user, new UserTransformer());
     }
 
 }

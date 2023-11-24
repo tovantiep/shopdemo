@@ -9,7 +9,6 @@ use App\Mail\OrderApproved;
 use App\Mail\OrderCancel;
 use App\Mail\OrderShip;
 use App\Models\Order;
-use App\Transformers\OrderItemTransformer;
 use App\Transformers\OrderTransformer;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -32,7 +31,7 @@ class OrderController extends Controller
             return fractal()
                 ->collection($product)
                 ->transformWith(new OrderTransformer())
-                ->parseIncludes('order_items')
+                ->parseIncludes(['order_items', 'user'])
                 ->paginateWith(new IlluminatePaginatorAdapter($product))
                 ->respond();
         });
@@ -50,7 +49,7 @@ class OrderController extends Controller
             return fractal()
                 ->collection($product)
                 ->transformWith(new OrderTransformer())
-                ->parseIncludes('order_items')
+                ->parseIncludes(['order_items', 'user'])
                 ->paginateWith(new IlluminatePaginatorAdapter($product))
                 ->respond();
         });
@@ -68,7 +67,7 @@ class OrderController extends Controller
             return fractal()
                 ->collection($product)
                 ->transformWith(new OrderTransformer())
-                ->parseIncludes('order_items')
+                ->parseIncludes(['order_items', 'user'])
                 ->paginateWith(new IlluminatePaginatorAdapter($product))
                 ->respond();
         });
@@ -89,7 +88,7 @@ class OrderController extends Controller
                 return fractal()
                     ->item($data)
                     ->transformWith(new OrderTransformer())
-                    ->parseIncludes('order_items')
+                    ->parseIncludes(['order_items', 'user'])
                     ->respond();
             } else {
                 DB::rollBack();

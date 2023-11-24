@@ -49,9 +49,11 @@ class ProductTransformer extends TransformerAbstract
             'image' => $imagePath,
             'color' => $model->color,
             'price' => $model->price,
+            'price_discount' => $model->price_discount,
             'quantity' => $model->quantity,
             'description' => $model->description,
             'total_rating' => $this->calculateAverageRating($model->id) ?? null,
+            'created_at' => $model->created_at,
         ];
     }
 

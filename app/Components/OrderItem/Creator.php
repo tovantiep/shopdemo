@@ -23,6 +23,11 @@ class Creator extends Component
             ->when($this->request->filled("quantity"), function ($query) {
                 $query->where('quantity', 'LIKE', '%' . $this->escapeLike($this->request->input('quantity')) . '%');
             });
+        $orderCheck = in_array($this->request->input("order"), self::ORDER);
+        if ($this->request->input("column") == 'created_at' && $orderCheck) {
+            $orderItem->orderBy('created_at', $this->request->input("order"));
+        }
+        $orderItem->orderByDesc('created_at');
         return $orderItem->paginate($this->getPaginationLimit($this->request));
     }
 

@@ -16,8 +16,6 @@ use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 
-
-
 /**
  * App\Models\Product
  *
@@ -29,6 +27,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property string $image
  * @property string $color
  * @property int $price
+ * @property int $price_discount
  * @property int $quantity
  * @property string|null $description
  * @property Carbon|null $created_at
@@ -54,6 +53,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @method static Builder|Product whereImage($value)
  * @method static Builder|Product whereName($value)
  * @method static Builder|Product wherePrice($value)
+ * @method static Builder|Product wherePriceDiscount($value)
  * @method static Builder|Product whereQuantity($value)
  * @method static Builder|Product whereSize($value)
  * @method static Builder|Product whereUpdatedAt($value)
@@ -76,6 +76,7 @@ class Product extends Authenticatable
         'image',
         'color',
         'price',
+        'price_discount',
         'quantity',
         'description'
     ];

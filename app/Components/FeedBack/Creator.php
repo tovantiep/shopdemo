@@ -7,7 +7,6 @@ use App\Models\Feedback;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 
-
 class Creator extends Component
 {
     /**
@@ -30,6 +29,11 @@ class Creator extends Component
             ->when($this->request->filled("comment"), function ($query) {
                 $query->where('comment', 'LIKE', '%' . $this->escapeLike($this->request->input('comment')) . '%');
             });
+        $orderCheck = in_array($this->request->input("order"), self::ORDER);
+        if ($this->request->input("column") == 'created_at' && $orderCheck) {
+            $feedBack->orderBy('created_at', $this->request->input("order"));
+        }
+        $feedBack->orderByDesc('created_at');
         return $feedBack->paginate($this->getPaginationLimit($this->request));
     }
 

@@ -18,8 +18,6 @@ use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-
-
 /**
  * App\Models\User
  *
@@ -30,6 +28,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $password
  * @property string|null $remember_token
  * @property int|null $role_id
+ * @property string $avatar
  * @property string|null $phone
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -49,6 +48,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @method static Builder|User newQuery()
  * @method static Builder|User query()
  * @method static Builder|User whereAddress($value)
+ * @method static Builder|User whereAvatar($value)
  * @method static Builder|User whereCreatedAt($value)
  * @method static Builder|User whereEmail($value)
  * @method static Builder|User whereEmailVerifiedAt($value)
@@ -73,6 +73,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'role_id',
+        'avatar',
         'phone',
         'name',
         'email',

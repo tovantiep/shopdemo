@@ -37,7 +37,8 @@ class CategoryTransformer extends TransformerAbstract
     {
         return [
             'id' =>$model->id,
-            'name' => $model->name
+            'name' => $model->name,
+            'created_at' => $model->created_at,
         ];
     }
 }

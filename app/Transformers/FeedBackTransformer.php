@@ -39,6 +39,7 @@ class FeedBackTransformer extends TransformerAbstract
             'id' =>$model->id,
             'rating' => $model->rating,
             'comment' => $model->comment,
+            'created_at' => $model->created_at,
         ];
     }
 
