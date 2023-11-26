@@ -117,12 +117,13 @@ class Creator extends Component
     public function store(): Product
     {
         $imagePath = $this->request->file('image')->store('public/images');
-
+        $sizeInput = $this->request->input('size');
+        $size = is_array($sizeInput) ? $sizeInput : explode(',', $sizeInput);
         $product = new Product([
             'category_id' => $this->request->input('category_id'),
             'name' => $this->request->input('name'),
             'code' => $this->request->input('code'),
-            'size' => $this->request->input('size'),
+            'size' => $size,
             'image' => $imagePath,
             'color' => $this->request->input('color'),
             'price' => $this->request->input('price'),
@@ -130,6 +131,7 @@ class Creator extends Component
             'quantity' => $this->request->input('quantity'),
             'description' => $this->request->input('description'),
         ]);
+
         $product->save();
         return $product;
     }
@@ -175,6 +177,11 @@ class Creator extends Component
         }
         if ($this->request->filled("description")) {
             $model->setAttribute("description", $this->request->input('description'));
+        }
+        if ($this->request->filled("size")) {
+            $sizeInput = $this->request->input('size');
+            $size = is_array($sizeInput) ? $sizeInput : explode(',', $sizeInput);
+            $model->setAttribute("size", $size);
         }
 
         $model->save();

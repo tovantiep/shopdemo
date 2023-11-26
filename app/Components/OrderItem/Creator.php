@@ -20,6 +20,9 @@ class Creator extends Component
             ->when($this->request->filled("amount"), function ($query) {
                 $query->where('amount', 'LIKE', '%' . $this->escapeLike($this->request->input('amount')) . '%');
             })
+            ->when($this->request->filled("size"), function ($query) {
+                $query->where('size', 'LIKE', $this->request->input('size'));
+            })
             ->when($this->request->filled("quantity"), function ($query) {
                 $query->where('quantity', 'LIKE', '%' . $this->escapeLike($this->request->input('quantity')) . '%');
             });
@@ -40,6 +43,7 @@ class Creator extends Component
             'product_id' => $this->request->input('product_id'),
             'amount' => $this->request->input('amount'),
             'quantity' => $this->request->input('quantity'),
+            'size' => $this->request->input('size'),
         ]);
         $orderItem->save();
         return $orderItem;

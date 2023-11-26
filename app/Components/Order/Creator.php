@@ -5,6 +5,7 @@ namespace App\Components\Order;
 use App\Components\Component;
 use App\Mail\OrderApproved;
 use App\Models\Order;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -114,6 +115,7 @@ class Creator extends Component
     /**
      * @param $id
      * @return array|string[]
+     * @throws Exception
      */
     public function cancel($id): array
     {
@@ -137,7 +139,7 @@ class Creator extends Component
                 if ($orderItem->quantity >= 0) {
                     $product->update(['quantity' => $product->quantity + $orderItem->quantity]);
                 } else {
-                    throw new \Exception('Không đủ hàng trong kho');
+                    throw new Exception('Không đủ hàng trong kho');
                 }
             }
         } else {
@@ -175,13 +177,13 @@ class Creator extends Component
                     if ($product->quantity - $orderItem->quantity >= 0) {
                         $product->update(['quantity' => $product->quantity - $orderItem->quantity]);
                     } else {
-                        throw new \Exception('Không đủ hàng trong kho');
+                        throw new Exception('Không đủ hàng trong kho');
                     }
                 }
             });
 
             return $order;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $e->getMessage();
         }
     }

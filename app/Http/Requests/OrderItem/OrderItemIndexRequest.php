@@ -17,6 +17,7 @@ class OrderItemIndexRequest extends FormRequest
         return [
             'amount' => 'integer',
             'quantity' => 'integer',
+            'size' => 'string',
         ];
     }
 

@@ -24,10 +24,13 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property int $product_id
  * @property int $amount
  * @property int $quantity
+ * @property string $size
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read Collection<int, Order> $orders
+ * @property-read int|null $orders_count
  * @property-read Product $product
  * @property-read Collection<int, PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
@@ -39,6 +42,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @method static Builder|OrderItem whereId($value)
  * @method static Builder|OrderItem whereProductId($value)
  * @method static Builder|OrderItem whereQuantity($value)
+ * @method static Builder|OrderItem whereSize($value)
  * @method static Builder|OrderItem whereUpdatedAt($value)
  * @mixin Eloquent
  */
@@ -54,7 +58,8 @@ class OrderItem extends Authenticatable
     protected $fillable = [
         'product_id',
         'amount',
-        'quantity'
+        'quantity',
+        'size',
     ];
 
     /**

@@ -18,7 +18,7 @@ class ProductStoreRequest extends FormRequest
             'category_id' => 'required|integer',
             'name' => 'required|string|max:255|unique:products,name',
             'code' => 'required|string|max:20',
-            'size' => 'required|string|max:255',
+            'size' => 'required|array',
             'image' => 'required|image|mimes:jpg,png,jpeg|max:2048',
             'color' => 'required|string|max:255',
             'price' => 'required|integer',

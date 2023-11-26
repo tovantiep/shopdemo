@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 
+
 /**
  * App\Models\Product
  *
@@ -23,7 +24,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property int $category_id
  * @property string $name
  * @property string $code
- * @property string $size
+ * @property mixed $size
  * @property string $image
  * @property string $color
  * @property int $price

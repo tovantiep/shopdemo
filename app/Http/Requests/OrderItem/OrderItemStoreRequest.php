@@ -16,7 +16,8 @@ class OrderItemStoreRequest extends FormRequest
     {
         return [
             'amount' => 'required|integer',
-            'quantity' => 'required|integer'
+            'quantity' => 'required|integer',
+            'size' => 'required|string',
         ];
     }
 }
