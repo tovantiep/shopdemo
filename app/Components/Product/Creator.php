@@ -123,7 +123,7 @@ class Creator extends Component
             'category_id' => $this->request->input('category_id'),
             'name' => $this->request->input('name'),
             'code' => $this->request->input('code'),
-            'size' => $size,
+            'size' => json_encode($size),
             'image' => $imagePath,
             'color' => $this->request->input('color'),
             'price' => $this->request->input('price'),
