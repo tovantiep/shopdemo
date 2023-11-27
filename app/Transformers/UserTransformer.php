@@ -2,8 +2,11 @@
 
 namespace App\Transformers;
 
+use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use JetBrains\PhpStorm\ArrayShape;
+use League\Fractal\Resource\Item;
 use League\Fractal\TransformerAbstract;
 
 class UserTransformer extends TransformerAbstract
@@ -14,7 +17,7 @@ class UserTransformer extends TransformerAbstract
      * @var array
      */
     protected array $defaultIncludes = [
-        //
+       'role'
     ];
 
     /**
@@ -27,17 +30,31 @@ class UserTransformer extends TransformerAbstract
     ];
 
     /**
-     * A Fractal transformer.
-     *
      * @param User $model
      * @return array
      */
-    #[ArrayShape([])] public function transform(User $model): array
-    {
+   public function transform(User $model): array
+   {
+       $imagePath = $model->avatar ? url(Storage::url($model->avatar)) : null;
         return [
             'id' => $model->id,
             'name' => $model->name,
-            'email' => $model->email
+            'avatar' => $imagePath,
+            'phone' => $model->phone,
+            'email' => $model->email,
+            'gender' => $model->gender,
+            'address' => $model->address,
+            'created_at' => $model->created_at,
         ];
+    }
+
+    /**
+     * @param User $model
+     * @return Item
+     */
+    public function includeRole(User $model): Item
+    {
+        $role = $model->role;
+        return $this->item($role, new RoleTransformer());
     }
 }

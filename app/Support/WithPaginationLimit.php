@@ -18,11 +18,11 @@ trait WithPaginationLimit
      */
     public function getPaginationLimit(Request $request, string $key = 'limit', int $default = null): mixed
     {
-        $default = $default ?? config('api.per_page', 50);
+        $default = $default ?? config('api.per_page', 500);
 
         $limit = ($request->filled($key) && is_numeric($request->get($key))) ? (int)$request->get($key) : $default;
 
-        if ($limit > 50) $limit = 50;
+        if ($limit > 500) $limit = 500;
 
         return $limit;
     }

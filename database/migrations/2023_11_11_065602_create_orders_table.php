@@ -16,20 +16,15 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('order_item_id');
             $table->integer('total_quantity');
             $table->integer('total_amount');
-            $table->boolean('status');
+            $table->boolean('status')->default(false);
+            $table->timestamps();
 
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
-            $table->foreign('order_item_id')
-                ->references('id')
-                ->on('order_items')
-                ->onDelete('cascade');
-            $table->timestamps();
         });
     }
 

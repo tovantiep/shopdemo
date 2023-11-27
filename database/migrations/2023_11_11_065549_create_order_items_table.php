@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id');
-            $table->integer('mount');
+            $table->integer('amount');
             $table->integer('quantity');
 
             $table->foreign('product_id')
