@@ -15,7 +15,7 @@ class ProductUpdateRequest extends FormRequest
     #[ArrayShape([])] public function rules(): array
     {
         return [
-            'name' => 'string|max:255|unique:products,name',
+            'name' => 'string|max:255',
             'code' => 'string|max:20',
             'size' => 'array',
             'color' => 'string|max:255',
