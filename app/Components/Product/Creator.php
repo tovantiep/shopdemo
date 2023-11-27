@@ -96,7 +96,7 @@ class Creator extends Component
                     'category_name' => $categoryName,
                     'name' => $product->name,
                     'code' => $product->code,
-                    'size' => $product->size,
+                    'size' => json_decode($product->size),
                     'image' => $imageUrl,
                     'color' => $product->color,
                     'price' => $product->price,
