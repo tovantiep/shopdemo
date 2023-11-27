@@ -181,7 +181,7 @@ class Creator extends Component
         if ($this->request->filled("size")) {
             $sizeInput = $this->request->input('size');
             $size = is_array($sizeInput) ? $sizeInput : explode(',', $sizeInput);
-            $model->setAttribute("size", $size);
+            $model->setAttribute("size", json_encode($size));
         }
 
         $model->save();
