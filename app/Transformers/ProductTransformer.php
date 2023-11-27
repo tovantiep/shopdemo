@@ -45,7 +45,7 @@ class ProductTransformer extends TransformerAbstract
             'id' =>$model->id,
             'name' => $model->name,
             'code' => $model->code,
-            'size' => $model->size,
+            'size' => json_decode($model->size),
             'image' => $imagePath,
             'color' => $model->color,
             'price' => $model->price,
