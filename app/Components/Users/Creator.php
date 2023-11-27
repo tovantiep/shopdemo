@@ -82,7 +82,7 @@ class Creator extends Component
      */
     public function store(): User
     {
-        $imagePath = $this->request->file('avatar')->store('public/images');
+        $imagePath = $this->request->file('avatar') ?  $this->request->file('avatar')->store('public/images'): null;
         $user = new User([
             'name' => $this->request->input('name'),
             'role_id' => $this->request->input('role_id'),
@@ -179,7 +179,7 @@ class Creator extends Component
     }
 
     /**
-     * @return array|string[]
+     * @return array
      */
     #[ArrayShape([])] public function login(): array
     {
