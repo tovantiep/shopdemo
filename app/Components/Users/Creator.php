@@ -86,7 +86,7 @@ class Creator extends Component
         $user = new User([
             'name' => $this->request->input('name'),
             'role_id' => $this->request->input('role_id'),
-            'avatar' => $imagePath,
+            'avatar' => $imagePath ?? null,
             'phone' => $this->request->input('phone'),
             'email' => $this->request->input('email'),
             'password' => bcrypt($this->request->input('password')),
