@@ -21,7 +21,7 @@ class ProductStoreRequest extends FormRequest
             'size' => 'required|array',
             'color' => 'required|string|max:255',
             'price' => 'required|integer',
-            'price_discount' => 'required|integer',
+            'price_discount' => 'integer',
             'quantity' => 'required|integer',
             'description' => 'string|max:255',
         ];
