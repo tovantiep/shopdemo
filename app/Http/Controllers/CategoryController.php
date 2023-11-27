@@ -30,6 +30,19 @@ class CategoryController extends Controller
 
     }
 
+
+    public function show(Request $request, Category $category): mixed
+    {
+        return $this->withErrorHandling(function () use ($request, $category) {
+            $category = (new Creator($request))->show($category);
+
+            return fractal()
+                ->item($category)
+                ->transformWith(new CategoryTransformer())
+                ->respond();
+        });
+    }
+
     /**
      * @param CategoryStoreRequest $request
      * @return JsonResponse

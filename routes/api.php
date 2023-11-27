@@ -38,6 +38,7 @@ Route::delete("user/delete/{id}", [AdminController::class, 'destroy'])->name('us
 // Category
 Route::post("category/store", [CategoryController::class, 'store'])->name('category.store');
 Route::get("category/index", [CategoryController::class, 'index'])->name('category.index');
+Route::get("category/show/{category}", [CategoryController::class, 'show'])->name('category.show');
 Route::put("category/update/{category}", [CategoryController::class, 'update'])->name('category.update');
 Route::delete("category/delete/{id}", [CategoryController::class, 'destroy'])->name('category.destroy');
 
