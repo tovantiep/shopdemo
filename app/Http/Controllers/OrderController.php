@@ -7,8 +7,10 @@ use App\Http\Requests\Order\OrderIndexRequest;
 use App\Http\Requests\Order\OrderStoreRequest;
 use App\Mail\OrderApproved;
 use App\Mail\OrderCancel;
+use App\Mail\OrderCreate;
 use App\Mail\OrderShip;
 use App\Models\Order;
+use App\Models\User;
 use App\Transformers\OrderTransformer;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -85,6 +87,7 @@ class OrderController extends Controller
             $data = (new Creator($request))->store();
             if ($data instanceof Order) {
                 DB::commit();
+                $this->sendOrderCreatedEmail($data);
                 return fractal()
                     ->item($data)
                     ->transformWith(new OrderTransformer())
@@ -99,6 +102,13 @@ class OrderController extends Controller
             return $this->message($exception->getMessage())
                 ->respondBadRequest();
         }
+    }
+
+    private function sendOrderCreatedEmail($data)
+    {
+        $user =  User::whereId($data->user_id)->first();
+         return  Mail::to($user->email)->send(new OrderCreate($data));
+
     }
 
     /**
