@@ -57,31 +57,24 @@ class Creator extends Component
         }
         if ($question == 'Sản phẩm nào mới nhất ?') {
             $productNew = Product::orderBy('created_at', 'DESC')->take(3)->get();
-
             $manager = new Manager();
             $resource = new Collection($productNew, new ProductTransformer());
-
             $response = $manager->createData($resource)->toArray();
 
             return response()->json(['answer' => $response]);
         }
         if ($question == 'Sản phẩm giảm giá rẻ nhất ?') {
             $productNew = Product::whereNotNull('price_discount')->orderBy('price_discount', 'ASC')->take(3)->get();
-
             $manager = new Manager();
             $resource = new Collection($productNew, new ProductTransformer());
-
             $response = $manager->createData($resource)->toArray();
 
             return response()->json(['answer' => $response]);
-
         }
         if ($question == 'Sản phẩm giá gốc rẻ nhất ?') {
             $productNew = Product::orderBy('price', 'ASC')->take(3)->get();
-
             $manager = new Manager();
             $resource = new Collection($productNew, new ProductTransformer());
-
             $response = $manager->createData($resource)->toArray();
 
             return response()->json(['answer' => $response]);
@@ -89,10 +82,8 @@ class Creator extends Component
         }
         if ($question == 'Sản phẩm đang giảm giá ?') {
             $product = Product::whereNotNull('price_discount')->get();
-
             $manager = new Manager();
             $resource = new Collection($product, new ProductTransformer());
-
             $response = $manager->createData($resource)->toArray();
 
             return response()->json(['answer' => $response]);
@@ -105,13 +96,24 @@ class Creator extends Component
         }
         if ($question == 'Sản phẩm được đánh giá gần đây ?') {
             $latestFeedback = Feedback::latest('created_at')->first();
-
             $productIds = $latestFeedback->product_id;
             $hotProductsDetails = Product::whereId( $productIds)->first();
-
             $manager = new Manager();
             $resource = new Item($hotProductsDetails, new ProductTransformer());
+            $response = $manager->createData($resource)->toArray();
 
+            return response()->json(['answer' => $response]);
+        }
+        if ($question == 'Sản phẩm bán nhạy nhất ?') {
+            $result = DB::table('order_items')
+                ->select('product_id', DB::raw('SUM(quantity) as total_quantity'))
+                ->groupBy('product_id')
+                ->orderByDesc('total_quantity')
+                ->first();
+            $productIds = $result->product_id;
+            $hotProductsDetails = Product::whereId( $productIds)->first();
+            $manager = new Manager();
+            $resource = new Item($hotProductsDetails, new ProductTransformer());
             $response = $manager->createData($resource)->toArray();
 
             return response()->json(['answer' => $response]);
@@ -124,20 +126,15 @@ class Creator extends Component
                 ->get();
 
             $productIds = $hotProducts->pluck('product_id');
-
             $hotProductsDetails = Product::whereIn('id', $productIds)
                 ->orderByRaw(DB::raw("FIELD(id, " . implode(',', $productIds->toArray()) . ")"))
                 ->get();
-
             $manager = new Manager();
             $resource = new Collection($hotProductsDetails, new ProductTransformer());
-
             $response = $manager->createData($resource)->toArray();
 
             return response()->json(['answer' => $response]);
         }
-
-
         if (isset($feedBack)) {
             return response()->json(['answer' => "$feedBack->answer"]);
         }
