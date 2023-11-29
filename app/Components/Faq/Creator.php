@@ -102,7 +102,7 @@ class Creator extends Component
             $resource = new Item($hotProductsDetails, new ProductTransformer());
             $response = $manager->createData($resource)->toArray();
 
-            return response()->json(['answer' => $response]);
+            return response()->json(['answer' => ['data' => [$response['data']]]]);
         }
         if ($question == 'Sản phẩm bán nhạy nhất ?') {
             $result = DB::table('order_items')
@@ -115,8 +115,7 @@ class Creator extends Component
             $manager = new Manager();
             $resource = new Item($hotProductsDetails, new ProductTransformer());
             $response = $manager->createData($resource)->toArray();
-
-            return response()->json(['answer' => $response]);
+            return response()->json(['answer' => ['data' => [$response['data']]]]);
         }
         if ($question == 'Sản phẩm được đánh giá cao ?' || $question == 'Sản phẩm hot nhất ?' ) {
             $hotProducts = Feedback::select('product_id', DB::raw('AVG(rating) as average_rating'))
