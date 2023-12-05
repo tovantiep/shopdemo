@@ -122,8 +122,8 @@ class Creator extends Component
         $product = new Product([
             'category_id' => $this->request->input('category_id'),
             'name' => $this->request->input('name'),
-            'code' => $this->request->input('code'),
             'size' => json_encode($size),
+            'code' => '',
             'image' => $imagePath,
             'color' => $this->request->input('color'),
             'price' => $this->request->input('price'),
@@ -131,8 +131,9 @@ class Creator extends Component
             'quantity' => $this->request->input('quantity'),
             'description' => $this->request->input('description'),
         ]);
-
         $product->save();
+        $product->code = 'TAKA-SHOP-P' . $product->id;
+        $product->update();
         return $product;
     }
 

@@ -16,7 +16,6 @@ class ProductUpdateRequest extends FormRequest
     {
         return [
             'name' => 'string|max:255',
-            'code' => 'string|max:20',
             'size' => 'array',
             'color' => 'string|max:255',
             'price' => 'integer',
