@@ -59,6 +59,18 @@ class ProductController extends Controller
      * @param ProductIndexRequest $request
      * @return mixed
      */
+    public function bestSeller(ProductIndexRequest $request): mixed
+    {
+        return $this->withErrorHandling(function () use ($request) {
+            return (new Creator($request))->bestSeller();
+        });
+
+    }
+
+    /**
+     * @param ProductIndexRequest $request
+     * @return mixed
+     */
     public function hot(ProductIndexRequest $request)
     {
         return $this->withErrorHandling(function () use ($request) {

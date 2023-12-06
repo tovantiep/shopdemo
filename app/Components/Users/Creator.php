@@ -78,9 +78,9 @@ class Creator extends Component
     }
 
     /**
-     * @return User
+     * @return array
      */
-    public function store(): User
+    #[ArrayShape(['result' => "string", 'data' => "array", 'message' => "string"])] public function store()
     {
         $imagePath = $this->request->file('avatar') ?  $this->request->file('avatar')->store('public/images'): null;
         $user = new User([
@@ -94,7 +94,24 @@ class Creator extends Component
             'address' => $this->request->input('address'),
         ]);
         $user->save();
-        return $user;
+        return [
+            'result' => 'SUCCESS',
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'email_verified_at' => $user->email_verified_at,
+                'role_id' => $user->role_id,
+                'role_name' => $user->role->name,
+                'avatar' => $user->avatar,
+                'phone' => $user->phone,
+                'created_at' => date_format($user->created_at, 'Y-m-d'),
+                'updated_at' =>  date_format($user->updated_at, 'Y-m-d'),
+                'gender' => $user->gender,
+                'address' => $user->address,
+            ],
+            'message' => 'Tạo thành công'
+        ];
     }
 
     /**

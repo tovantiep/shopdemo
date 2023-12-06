@@ -49,19 +49,15 @@ class AdminController extends Controller
 
     /**
      * @param UserStoreRequest $request
-     * @return JsonResponse
+     * @return JsonResponse|array
      */
-    public function store(UserStoreRequest $request): JsonResponse
+    public function store(UserStoreRequest $request): JsonResponse|array
     {
         DB::beginTransaction();
         try {
             $data = (new Creator($request))->store();
             DB::commit();
-            return fractal()
-                ->item($data)
-                ->transformWith(new UserTransformer())
-                ->parseIncludes('role')
-                ->respond();
+            return $data;
         } catch (Exception $exception) {
             DB::rollBack();
             return $this->message($exception->getMessage())

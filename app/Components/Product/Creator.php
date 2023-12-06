@@ -5,12 +5,14 @@ namespace App\Components\Product;
 use App\Components\Component;
 use App\Models\Feedback;
 use App\Models\Product;
+use App\Transformers\ProductTransformer;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use League\Fractal\Manager;
 
 
 class Creator extends Component
@@ -68,6 +70,26 @@ class Creator extends Component
 
         $product = Product::whereCategoryId($category_id);
         return $product->paginate($this->getPaginationLimit($this->request));
+    }
+
+    /**
+     * @return array|null
+     */
+    public function bestSeller(): ?array
+    {
+        $result = DB::table('order_items')
+            ->select('product_id', DB::raw('SUM(quantity) as total_quantity'))
+            ->groupBy('product_id')
+            ->orderByDesc('total_quantity')
+            ->take(12)
+            ->get();
+        $productIds = $result->pluck('product_id');
+        $products = Product::whereIn('id', $productIds)
+            ->orderByRaw(DB::raw("FIELD(id, " . implode(',', $productIds->toArray()) . ")"))
+            ->get();
+        $manager = new Manager();
+        $resource = new \League\Fractal\Resource\Collection($products, new ProductTransformer());
+        return $manager->createData($resource)->toArray();
     }
 
     /**

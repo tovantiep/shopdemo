@@ -71,7 +71,7 @@ class Creator extends Component
 
     /**
      * @param $id
-     * @return array|string[]
+     * @return array
      */
     public function approve($id): array
     {
@@ -93,7 +93,7 @@ class Creator extends Component
 
     /**
      * @param $id
-     * @return array|string[]
+     * @return array
      */
     public function ship($id): array
     {
@@ -114,7 +114,7 @@ class Creator extends Component
 
     /**
      * @param $id
-     * @return array|string[]
+     * @return array
      * @throws Exception
      */
     public function cancel($id): array
@@ -162,13 +162,11 @@ class Creator extends Component
                 'total_quantity' => $this->request->input('total_quantity'),
                 'code' => strtoupper(Str::random(5)),
             ]);
-
             $orderItems = $this->request->input('order_item_id');
 
             DB::transaction(function () use ($order, $orderItems) {
                 $order->save();
                 $order->orderItems()->attach($orderItems);
-
                 $orderItems = $order->orderItems;
 
                 foreach ($orderItems as $orderItem) {
@@ -181,7 +179,6 @@ class Creator extends Component
                     }
                 }
             });
-
             return $order;
         } catch (Exception $e) {
             return $e->getMessage();

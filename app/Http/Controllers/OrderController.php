@@ -15,6 +15,7 @@ use App\Transformers\OrderTransformer;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Mail\SentMessage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
@@ -104,10 +105,14 @@ class OrderController extends Controller
         }
     }
 
-    private function sendOrderCreatedEmail($data)
+    /**
+     * @param $data
+     * @return void
+     */
+    private function sendOrderCreatedEmail($data): void
     {
         $user =  User::whereId($data->user_id)->first();
-         return  Mail::to($user->email)->send(new OrderCreate($data));
+        Mail::to($user->email)->send(new OrderCreate($data));
 
     }
 

@@ -46,6 +46,7 @@ Route::delete("category/delete/{id}", [CategoryController::class, 'destroy'])->n
 Route::post("product/store", [ProductController::class, 'store'])->name('product.store');
 Route::get("product/index", [ProductController::class, 'index'])->name('product.index');
 Route::get("product/hot", [ProductController::class, 'hot'])->name('product.hot');
+Route::get("product/seller", [ProductController::class, 'bestSeller'])->name('product.seller');
 Route::put("product/update/{product}", [ProductController::class, 'update'])->name('product.update');
 Route::get("product/show/{product}", [ProductController::class, 'show'])->name('product.show');
 Route::get("product/related", [ProductController::class, 'related'])->name('product.related');
