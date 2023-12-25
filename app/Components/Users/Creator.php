@@ -62,7 +62,7 @@ class Creator extends Component
         $data = [];
         $user = User::all();
         $order = Order::all();
-        $totalUser = $user->where('role_id', 0)->count();
+        $totalUser = $user->where('role_id', 2)->count();
         $totalAdmin = $user->where('role_id', 1)->count();
         $revenue = $order->whereIn('status', [1, 2]);
         $estimatedRevenue = $order->where('status', '<>', 3);
